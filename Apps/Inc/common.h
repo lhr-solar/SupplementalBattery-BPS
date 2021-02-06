@@ -1,6 +1,6 @@
 /* Copyright (c) 2020 UT Longhorn Racing Solar */
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef __COMMON_H
+#define __COMMON_H
 
 #include <ctype.h>
 #include <stdint.h>

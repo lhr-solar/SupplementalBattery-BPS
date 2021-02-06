@@ -1,9 +1,11 @@
-# SupplementalBattery-BPS
-This repo contains all code related to the UTSVT Battery Protection System Supplemental Monitoring
-Board.
+# Battery Protection System Code
+This repo contains all code related to UTSVT's Battery Protection System
 
 ## Setup
-Development is done in a linux environment to build and flash the BPS program.
+There are two options for developing the BPS system. One option is to use the Keil IDE, which includes some basic debugging tools. The other option is to use a terminal in a linux environment to build and flash the program.
+
+### Setup for Keil Development
+There is a tool called Keil that ARM produces for development on its microcontrollers. Download the most recent version of the Keil IDE: https://www.keil.com/demo/eval/arm.htm
 
 ### Setup for Terminal Development
 The system can also be built and deployed from a terminal, allowing you to use different development tools than Keil.
@@ -19,13 +21,9 @@ The system can also be built and deployed from a terminal, allowing you to use d
     - C/C++
     - ARM
     - cortex-debug
-5. OPTIONAL: If you are testing on the simulator, you must add the following line in `/etc/security/limits.conf` then restart your machine:
-    ```
-    <username> - rtprio unlimited
-    ```
 
 ## Building
-When calling any of the following commands, make sure you are in the top level of the repo.
+When calling any of the following commands, make sure you are in the top most level of the directory.
 
 Call ```make bsp_type``` to compile the release version of the code. ```bsp_type``` is the system you want to compile for.
 
@@ -47,7 +45,7 @@ The following testing information is speficially for terminal development.
 To build a new test, you need to use the following command:
 ```make bsp_type TEST=x```
 
-- ```bsp_type``` specifies which system you want to compile the code for: ```stm32f413```
+- ```bsp_type``` specifies which system you want to compile the code for: ```stm32f413```, ```simulator```
 - ```x``` specifies which test you want to compile. TEST= is optional and only required if a test is to be compiled. Set TEST equal to the suffix of the Test_ src files i.e. if the test you want to run is in Test_x.c, set TEST=x.
     E.g. Call ```make stm32f413 TEST=Voltage``` if you want to test Voltage.c with the Test_Voltage.c src file
 
@@ -56,7 +54,7 @@ Make sure to have fun!
 
 Commit frequently into your own branches. Create a Pull Request whenever you are ready to add you working code to the master branch. Make sure that your code compiles without any errors or warnings before you open a pull request. You must select 1 reviewer for approval. Follow the coding guidelines in the Solar Google Drive. The reviewers will make sure everything is up to par with the coding standards.
 
-Reviewers:
+Reviewers: (More will be added)
 1. Sijin Woo
 2. Chase Block
 3. Clark Poon
