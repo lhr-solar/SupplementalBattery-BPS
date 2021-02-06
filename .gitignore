@@ -50,3 +50,16 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# ignore
+*BPS-master.uvguix.*
+*Objects
+*Listings
+*DebugConfig
+*.uvoptx
+*.uvprojx
+*.out
+*.csv
+*.log
+RTE_Components.h
+__pycache__
