@@ -3,7 +3,6 @@
 ######################################
 TARGET = bps-leader
 
-DEBUG = 1
 
 ######################################
 # building variables
@@ -14,38 +13,35 @@ OPT = -Og
 #######################################
 # paths
 #######################################
-# Top Level
-TOP_DIR = ../..
 # Build path
-BUILD_DIR = $(TOP_DIR)/Objects
-# RTOS path
-RTOS_DIR = $(TOP_DIR)/RTOS/uCOS-III-STM32F4
+BUILD_DIR = ../../Objects
 
 ######################################
 # source
 ######################################
 # C sources
-# since current path is in the BSP folder, go to the top level with $(TOP_DIR)/
+# since current path is in the BSP folder, go to the top level with ../../
 C_SOURCES =  \
-$(wildcard $(TOP_DIR)/Drivers/Src/*.c)	\
-$(wildcard $(TOP_DIR)/BSP/STM32F413/Src/*.c)	\
-$(wildcard $(TOP_DIR)/CMSIS/DSP_Lib/Source/*.c)	\
-$(wildcard $(TOP_DIR)/Config/Src/*.c)	\
-$(wildcard $(TOP_DIR)/BSP/STM32F413/STM32F4xx_StdPeriph_Driver/Src/*.c)	\
+$(wildcard ../../Drivers/Src/*.c)	\
+$(wildcard ../../BSP/STM32F413/Src/*.c)	\
+$(wildcard ../../CMSIS/DSP_Lib/Source/*.c)	\
+$(wildcard ../../BSP/STM32F413/STM32F4xx_StdPeriph_Driver/Src/*.c)	
+
 
 ifneq ($(TEST), none)
 TEST_FILE := Test_$(TEST).c
 # This line adds everything in Apps/Src/*.c except for main.c
 C_SOURCES += \
-$(filter-out $(TOP_DIR)/Apps/Src/main.c, $(wildcard $(TOP_DIR)/Apps/Src/*.c))	\
-$(wildcard $(TOP_DIR)/Tests/$(TEST_FILE))
+$(filter-out ../../Apps/Src/main.c, $(wildcard ../../Apps/Src/*.c))	\
+$(wildcard ../../Tests/$(TEST_FILE))
 else
-C_SOURCES += $(wildcard $(TOP_DIR)/Apps/Src/*.c)
+C_SOURCES += $(wildcard ../../Apps/Src/*.c)
 endif
 
 # ASM sources
 ASM_SOURCES =  \
-$(TOP_DIR)/BSP/STM32F413/Src/startup_stm32f413xx.s	\
+../../BSP/STM32F413/Src/startup_stm32f413xx.s
+
 
 #######################################
 # binaries
@@ -92,27 +88,28 @@ AS_DEFS =
 C_DEFS =  \
 -DSTM32F413_423xx	\
 -DUSE_STDPERIPH_DRIVER	\
--D__FPU_PRESENT \
--D$(OS)
+-D__FPU_PRESENT
+
 
 # AS includes
 AS_INCLUDES = 
 
 # C includes
-# since current path is in the BSP folder, go to the top level with $(TOP_DIR)/
+# since current path is in the BSP folder, go to the top level with ../../
 C_INCLUDES =  \
--I$(TOP_DIR)/Apps/Inc	\
--I$(TOP_DIR)/Drivers/Inc	\
--I$(TOP_DIR)/Config/Inc	\
--I$(TOP_DIR)/BSP/Inc	\
--I$(TOP_DIR)/CMSIS/Device/ST/STM32F4xx/Include	\
--I$(TOP_DIR)/CMSIS/Include	\
--I$(TOP_DIR)/BSP/STM32F413/STM32F4xx_StdPeriph_Driver/Inc	\
+-I../../Apps/Inc	\
+-I../../Drivers/Inc	\
+-I../../Config/Inc	\
+-I../../BSP/Inc	\
+-I../../CMSIS/Device/ST/STM32F4xx/Include	\
+-I../../CMSIS/Include	\
+-I../../BSP/STM32F413/STM32F4xx_StdPeriph_Driver/Inc
+
 
 # compile gcc flags
 ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
 
-CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -Werror -fdata-sections -ffunction-sections
+CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
 
 ifeq ($(DEBUG), 1)
 CFLAGS += -g3 -gdwarf-2
@@ -176,7 +173,7 @@ clean:
 #######################################
 # flash
 #######################################
-flash: $(BUILD_DIR)/$(TARGET).bin
+flash:
 	$(SF) write $(BUILD_DIR)/$(TARGET).bin 0x8000000
 
 #######################################

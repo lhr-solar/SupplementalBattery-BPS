@@ -17,7 +17,7 @@ all:
 	@echo "${RED}Not enough arguments. Call: ${ORANGE}make help${NC}"
 
 stm32f413:
-	$(MAKE) -C BSP -C STM32F413 -j
+	$(MAKE) -C BSP -C STM32F413 -j4
 
 flash:
 	$(MAKE) -C BSP -C STM32F413 flash

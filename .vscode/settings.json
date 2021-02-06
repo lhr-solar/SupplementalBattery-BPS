@@ -1,0 +1,20 @@
+{
+    "files.associations": {
+        "current.h": "c",
+        "stdbool.h": "c",
+        "bsp_gpio.h": "c",
+        "common.h": "c",
+        "cli.h": "c",
+        "bsp_uart.h": "c",
+        "soc.h": "c",
+        "config.h": "c",
+        "stm32f4xx.h": "c",
+        "bsp_timer.h": "c",
+        "temperature.h": "c",
+        "math.h": "c",
+        "bsp_adc.h": "c"
+    },
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true,
+    "python.pythonPath": "/usr/bin/python3"
+}
