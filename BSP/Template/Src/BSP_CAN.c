@@ -12,16 +12,17 @@ void BSP_CAN_Init(void) {
 
 /**
  * @brief   Transmits the data onto the CAN bus with the specified id
- * @param   id : Message of ID. Also indicates the priority of message. The lower the value, the higher the priority.
- * @param   data : data to be transmitted. The max is 8 bytes.
- * @param   length : num of bytes of data to be transmitted. This must be <= 8 bytes or else the rest of the message is dropped.
- * @return  0 if module was unable to transmit the data onto the CAN bus. Any other value indicates data was transmitted.
+* @param   id : Message of ID. Also indicates the priority of message. The lower the value, the higher the priority.
+* @param   Voltage : the voltage value at that moment in a float
+* @return  0 if module was unable to transmit the data onto the CAN bus. Any other value indicates data was transmitted.
  */
-uint8_t BSP_CAN_Write(uint32_t id, uint8_t data[8], uint8_t length) {
+uint8_t BSP_CAN_Write(uint32_t id, float Voltage) {
     
     // TODO: Transmit the data onto the CAN bus with the specified ID.
-
-    return 0;
+    TxMessage.StdId = id;
+    TxMessage.StdId = Voltage;
+	
+	return CAN_Transmit(CAN1, &TxMessage);
 }
 
 /**
