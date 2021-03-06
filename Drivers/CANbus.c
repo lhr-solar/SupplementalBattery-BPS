@@ -1,4 +1,4 @@
-#include "CANbus.h"
+
 #include "BSP_CAN.h"
 
 static void floatTo4Bytes(uint8_t f, uint8_t bytes[4]);

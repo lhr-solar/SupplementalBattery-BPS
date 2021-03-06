@@ -5,8 +5,8 @@
 // #include "ALEX FOLDER " ==> will hold checkVoltage() function
 
 int main(void){
-while(checkVolatge() > 0){
- BSP_CAN_Write(0x10B, checkVoltage() )     //send message to CAN Controller 
+    while(checkVolatge() > 0){
+        BSP_CAN_Write(0x10B, checkVoltage() )     //send message to CAN Controller 
     }
 }
         
