@@ -12,7 +12,7 @@
         "bsp_timer.h": "c",
         "temperature.h": "c",
         "math.h": "c",
-        "basp_adc.h": "c",
+        "bsp_adc.h": "c",
         "csdint": "c",
         "cstdint": "cpp"
     },
