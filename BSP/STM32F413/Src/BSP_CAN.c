@@ -110,8 +110,11 @@ uint8_t BSP_CAN_Write(uint32_t id, float Voltage) {
     
     // TODO: Transmit the data onto the CAN bus with the specified ID.
     TxMessage.StdId = id;
-    floatTo4Bytes(Voltage, TxMessage.Data[4]);
-    TxMessage.Data[4] = Voltage;
+    for(int i = 0; i < length; i++){
+        TxMessage.Data[i] = data[i];
+	}
+    // floatTo4Bytes(Voltage, TxMessage.Data[4]);
+    Voltage = TxMessage.Data[4];
 
 
 	return CAN_Transmit(CAN1, &TxMessage);
