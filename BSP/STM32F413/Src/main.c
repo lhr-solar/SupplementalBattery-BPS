@@ -5,7 +5,7 @@
 
 /* Copyright (c) 2020 UT Longhorn Racing Solar */
 
-#define BSPVARIABLE "0x10b"
+#define BSPVARIABLE 0x10b
 // #include "ALEX FOLDER " ==> will hold checkVoltage() function
 
 int main(void){
