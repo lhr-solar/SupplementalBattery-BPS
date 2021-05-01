@@ -2,14 +2,13 @@
  
 #include "BSP_CAN.h"
 #include "config.h"
-#include "BSP_ADC"
+#include "BSP_ADC.h"
 /* Copyright (c) 2021 UT Longhorn Racing Solar */
 
 #define BSPVARIABLE 0x10b
  
 int main(void){
-    while(checkVoltage() >= 0){
-        while(true){
-        BSP_CAN_Write(BSPVARIABLE, checkVoltage());     //send message to CAN Controller 
-    }
+    BSP_ADC_Init();
+    BSP_CAN_Init();
+    while(1) BSP_CAN_Write(BSPVARIABLE, BSP_ADC_UpdateMeasurements()); //send message to CAN Controller 
 }

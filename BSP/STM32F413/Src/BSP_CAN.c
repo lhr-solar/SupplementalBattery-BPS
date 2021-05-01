@@ -10,6 +10,8 @@ static CanRxMsg RxMessage;
 
 static bool RxFlag = false;
 
+static void floatTo4Bytes(uint8_t val, uint8_t bytes_array[4]);
+
 /**
  * @brief   Initializes the CAN module that communicates with the rest of the electrical system.
  * @param   None
@@ -109,12 +111,7 @@ void BSP_CAN_Init(void) {
 uint8_t BSP_CAN_Write(uint32_t id, float Voltage) {
     
     TxMessage.StdId = id;
-    for(int i = 0; i < Voltage; i++){
-      // Voltage[i] = TxMessage.Voltage[i];
-	}
-    // floatTo4Bytes(Voltage, TxMessage.Data[4]);
-    Voltage = TxMessage.Data[4];
-//remove min.c from inc and put stuff in src folder
+    floatTo4Bytes(Voltage, TxMessage.Data[4]);
 
 	return CAN_Transmit(CAN1, &TxMessage);
 }
@@ -149,4 +146,23 @@ void CAN1_RX0_IRQHandler(void)
         RxFlag = true;
     }
 
+}
+
+static void floatTo4Bytes(uint8_t val, uint8_t bytes_array[4]) {
+	uint8_t volt;
+	// Create union of shared memory space
+	union {
+			float float_variable;
+			uint8_t volt_array[4];
+	} u;
+	// Overite bytes of union with float variable
+	u.float_variable = val;
+	// Assign bytes to input array
+	memcpy(bytes_array, u.volt_array, 4);
+    volt = bytes_array[3];
+	bytes_array[3] = bytes_array[0];
+	bytes_array[0] =    volt;
+    volt = bytes_array[2];
+	bytes_array[2] = bytes_array[1];
+	bytes_array[1] =    volt;	
 }
