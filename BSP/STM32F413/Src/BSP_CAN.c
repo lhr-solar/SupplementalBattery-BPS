@@ -10,6 +10,8 @@ static CanRxMsg RxMessage;
 
 static bool RxFlag = false;
 
+static void floatTo4Bytes(uint8_t val, uint8_t bytes_array[4]);
+
 /**
  * @brief   Initializes the CAN module that communicates with the rest of the electrical system.
  * @param   None
@@ -102,17 +104,15 @@ void BSP_CAN_Init(void) {
 
 /**
  * @brief   Transmits the data onto the CAN bus with the specified id
- * @param   id : Message of ID. Also indicates the priority of message. The lower the value, the higher the priority.
- * @param   data : data to be transmitted. The max is 8 bytes.
- * @param   length : num of bytes of data to be transmitted. This must be <= 8 bytes or else the rest of the message is dropped.
- * @return  0 if module was unable to transmit the data onto the CAN bus. Any other value indicates data was transmitted.
+* @param   id : Message of ID. Also indicates the priority of message. The lower the value, the higher the priority.
+* @param   Voltage : the voltage value at that moment in a float
+* @return  0 if module was unable to transmit the data onto the CAN bus. Any other value indicates data was transmitted.
  */
-uint8_t BSP_CAN_Write(uint32_t id, uint8_t data[8], uint8_t length) {
+uint8_t BSP_CAN_Write(uint32_t id, float Voltage) {
+    
     TxMessage.StdId = id;
-    TxMessage.DLC = length;
-	for(int i = 0; i < length; i++){
-        TxMessage.Data[i] = data[i];
-	}
+    floatTo4Bytes(Voltage, &TxMessage.Data[4]);
+
 	return CAN_Transmit(CAN1, &TxMessage);
 }
 
@@ -140,8 +140,29 @@ void CAN1_RX0_IRQHandler(void)
 {
     CAN_Receive(CAN1, CAN_FIFO0, &RxMessage);
 
+
     if ((RxMessage.StdId == 0x001)&&(RxMessage.IDE == CAN_ID_STD) && (RxMessage.DLC == 1)){
         // TODO: do stuff
         RxFlag = true;
     }
+
+}
+
+static void floatTo4Bytes(uint8_t val, uint8_t bytes_array[4]) {
+	uint8_t volt;
+	// Create union of shared memory space
+	union {
+			float float_variable;
+			uint8_t volt_array[4];
+	} u;
+	// Overite bytes of union with float variable
+	u.float_variable = val;
+	// Assign bytes to input array
+	memcpy(bytes_array, u.volt_array, 4);
+    volt = bytes_array[3];
+	bytes_array[3] = bytes_array[0];
+	bytes_array[0] =    volt;
+    volt = bytes_array[2];
+	bytes_array[2] = bytes_array[1];
+	bytes_array[1] =    volt;	
 }
