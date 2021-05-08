@@ -111,7 +111,7 @@ void BSP_CAN_Init(void) {
 uint8_t BSP_CAN_Write(uint32_t id, float Voltage) {
     
     TxMessage.StdId = id;
-    floatTo4Bytes(Voltage, TxMessage.Data[4]);
+    floatTo4Bytes(Voltage, &TxMessage.Data[4]);
 
 	return CAN_Transmit(CAN1, &TxMessage);
 }

@@ -6,5 +6,5 @@
 //Initialize ADC
 void BSP_ADC_Init();
 
-//Return value of ADC measurements
+//Return value of ADC measurements in mV
 float BSP_ADC_UpdateMeasurements(void);

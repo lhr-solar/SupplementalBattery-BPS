@@ -10,5 +10,9 @@
 int main(void){
     BSP_ADC_Init();
     BSP_CAN_Init();
-    while(1) BSP_CAN_Write(BSPVARIABLE, BSP_ADC_UpdateMeasurements()); //send message to CAN Controller 
+    int err;
+    while(1) {
+        err = BSP_CAN_Write(BSPVARIABLE, BSP_ADC_UpdateMeasurements()); //send message to CAN Controller 
+        if (err == 0){/*ERROR HANDLING HERE*/}
+    }
 }
