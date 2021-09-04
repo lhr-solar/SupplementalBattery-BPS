@@ -46,5 +46,5 @@ void BSP_ADC_Init(){
 float BSP_ADC_UpdateMeasurements(void){
     uint16_t val = ADC_GetConversionValue(ADC1); //0x000 means 14V and 0xFFF means 0V (12-bit ADC)
     float mV = (val * 3300) >> 12;
-    return 1400 - mV; //return value in mV
+    return (float) (1400 - mV); //return value in mV
 }
