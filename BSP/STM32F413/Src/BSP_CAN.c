@@ -108,10 +108,11 @@ void BSP_CAN_Init(void) {
 * @param   Voltage : the voltage value at that moment in a float
 * @return  0 if module was unable to transmit the data onto the CAN bus. Any other value indicates data was transmitted.
  */
-uint8_t BSP_CAN_Write(uint32_t id, float Voltage) {
+uint8_t BSP_CAN_Write(uint32_t id, int32_t Voltage) {
     
     TxMessage.StdId = id;
-    floatTo4Bytes(Voltage, &TxMessage.Data[4]);
+    //floatTo4Bytes(Voltage, &TxMessage.Data[4]);
+    memcpy(TxMessage.Data, &Voltage, sizeof(Voltage));
 
 	return CAN_Transmit(CAN1, &TxMessage);
 }
