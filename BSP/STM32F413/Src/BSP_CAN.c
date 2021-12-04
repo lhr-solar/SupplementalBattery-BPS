@@ -3,21 +3,22 @@
 #include "BSP_CAN.h"
 #include "stm32f4xx.h"
 
-#define CAN_MODE        CAN_Mode_Normal
+#define CAN_MODE        CAN_Mode_LoopBack   //was Normal
 
 static CanTxMsg TxMessage;
 static CanRxMsg RxMessage;
 
-static bool RxFlag = false;
+static bool RxFlag = true; //was originally false
 
 static void floatTo4Bytes(uint8_t val, uint8_t bytes_array[4]);
+
 
 /**
  * @brief   Initializes the CAN module that communicates with the rest of the electrical system.
  * @param   None
  * @return  None
  */
-void BSP_CAN_Init(void) {
+void BSP_CAN_Init(void) { //orignally was void return type
     GPIO_InitTypeDef GPIO_InitStructure;
     CAN_InitTypeDef CAN_InitStructure;
     NVIC_InitTypeDef NVIC_InitStructure;
@@ -49,7 +50,7 @@ void BSP_CAN_Init(void) {
 
     /* CAN cell init */
     CAN_InitStructure.CAN_TTCM = DISABLE;
-    CAN_InitStructure.CAN_ABOM = DISABLE;
+    CAN_InitStructure.CAN_ABOM = DISABLE; //was DISABLE
     CAN_InitStructure.CAN_AWUM = DISABLE;
     CAN_InitStructure.CAN_NART = DISABLE;
     CAN_InitStructure.CAN_RFLM = DISABLE;
@@ -63,8 +64,8 @@ void BSP_CAN_Init(void) {
     */
     CAN_InitStructure.CAN_BS1 = CAN_BS1_3tq;
     CAN_InitStructure.CAN_BS2 = CAN_BS2_4tq; 
-    CAN_InitStructure.CAN_Prescaler = 16;
-    CAN_Init(CAN1, &CAN_InitStructure);
+    CAN_InitStructure.CAN_Prescaler = 16; //is 20 in RTOS code, 16 here originally
+    uint8_t CANinitSuccess= CAN_Init(CAN1, &CAN_InitStructure);
 
     /* CAN filter init */
     CAN_FilterInitStructure.CAN_FilterNumber = 0;
@@ -84,12 +85,23 @@ void BSP_CAN_Init(void) {
     TxMessage.IDE = CAN_ID_STD;
     TxMessage.DLC = 1;
 
+    //idk if this will change anything
+    for(int i = 0; i < 8; i++){
+        TxMessage.Data[i] = 0;
+	}
+	return CAN_Transmit(CAN1, &TxMessage);
+
     /* Receive Structure preparation */
     RxMessage.StdId = 0x00;
     RxMessage.ExtId = 0x00;
     RxMessage.IDE = CAN_ID_STD;
     RxMessage.DLC = 0;
     RxMessage.FMI = 0;
+
+    //idk if this will change anything
+    for(int i = 0; i < 8; i++){
+        RxMessage.Data[i] = 0;
+	}
 
     /* Enable FIFO 0 message pending Interrupt */
     CAN_ITConfig(CAN1, CAN_IT_FMP0, ENABLE);
@@ -100,6 +112,10 @@ void BSP_CAN_Init(void) {
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);	
+
+
+    //return CANinitSuccess;
+    
 }
 
 /**
@@ -111,9 +127,17 @@ void BSP_CAN_Init(void) {
 uint8_t BSP_CAN_Write(uint32_t id, int32_t Voltage) {
     
     TxMessage.StdId = id;
-    //floatTo4Bytes(Voltage, &TxMessage.Data[4]);
+       //floatTo4Bytes(Voltage, &TxMessage.Data[4]);
     memcpy(TxMessage.Data, &Voltage, sizeof(Voltage));
 
+
+    //uint8_t BSP_CAN_Write(uint32_t id, uint8_t data[8], uint8_t length) {
+    //TxMessage.DLC = sizeof(Voltage);
+    //uint8_t length =sizeof(Voltage);
+    
+
+	//for(int i = 0; i < length; i++){
+    //    TxMessage.Data[i] = data[i];}
 	return CAN_Transmit(CAN1, &TxMessage);
 }
 
