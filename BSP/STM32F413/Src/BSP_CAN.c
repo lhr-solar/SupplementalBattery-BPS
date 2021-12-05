@@ -8,7 +8,7 @@
 static CanTxMsg TxMessage;
 static CanRxMsg RxMessage;
 
-static bool RxFlag = true; //was originally false
+static bool RxFlag = false; //was originally false
 
 static void floatTo4Bytes(uint8_t val, uint8_t bytes_array[4]);
 
@@ -89,10 +89,10 @@ void BSP_CAN_Init(void) { //orignally was void return type
     for(int i = 0; i < 8; i++){
         TxMessage.Data[i] = 0;
 	}
-	return CAN_Transmit(CAN1, &TxMessage);
+	//return CAN_Transmit(CAN1, &TxMessage);
 
     /* Receive Structure preparation */
-    RxMessage.StdId = 0x00;
+    RxMessage.StdId = 0x00; //was 0
     RxMessage.ExtId = 0x00;
     RxMessage.IDE = CAN_ID_STD;
     RxMessage.DLC = 0;
@@ -149,16 +149,20 @@ uint8_t BSP_CAN_Write(uint32_t id, int32_t Voltage) {
  * @param   data : pointer to store data that was received. Must be 8bytes or bigger.
  * @return  0 if nothing was received so ignore id and data that was received. Any other value indicates data was received and stored.
  */
-uint8_t BSP_CAN_Read(uint32_t *id, uint8_t *data) {
-    if(RxFlag){
+uint8_t BSP_CAN_Read(uint32_t *id, uint8_t *data) { //originally returns uint8_t
+
+    //CAN1_RX0_IRQHandler();
+    //if(RxFlag){
 		for(int i = 0; i < 8; i++){
 			data[i] = RxMessage.Data[i];
 		}
         *id = RxMessage.StdId;
 		RxFlag = false;
 		return 1;
-	}
+	//}
     return 0;
+   
+   
 }
 
 void CAN1_RX0_IRQHandler(void)
