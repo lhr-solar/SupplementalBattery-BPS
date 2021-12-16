@@ -12,24 +12,28 @@ int main(void){
     BSP_CAN_Init();
     volatile uint8_t mailBoxNum;
     volatile uint8_t errRead;
+    volatile uint8_t transmitState;
     uint32_t rxId;
     uint8_t rxData[8];
     volatile int32_t batterymV;
+    volatile uint8_t numMessagesWaiting;
+    //batterymV = (3254000-BSP_ADC_UpdateMeasurements()* 1000)/220; 
+    //mailBoxNum = BSP_CAN_Write(CAN_ID, batterymV); //send mV reading from battery back to CAN
+    //volatile uint8_t transmitStat= CAN_TransmitStatus(CAN1, mailBoxNum); //0 for fail, 1 for good, 2 for pending??
+    volatile int test=0;
 
-    batterymV = (3254000-BSP_ADC_UpdateMeasurements()* 1000)/220; 
-    mailBoxNum = BSP_CAN_Write(CAN_ID, batterymV); //send mV reading from battery back to CAN
-    volatile uint8_t transmitStat= CAN_TransmitStatus(CAN1, mailBoxNum); //0 for fail, 1 for good, 2 for pending??
 
     while(1) {
-        //send message to CAN Controller 
-        //batterymV = (3254000-BSP_ADC_UpdateMeasurements()* 1000)/220; //this is op amp equation but reversed to get original battery voltage input
-        //errWrite = BSP_CAN_Write(CAN_ID, batterymV); //send mV reading from battery back to CAN
+        batterymV = (3254000-BSP_ADC_UpdateMeasurements()* 1000)/220; 
+        mailBoxNum = BSP_CAN_Write(CAN_ID, batterymV); //send mV reading from battery back to CAN
+        transmitState= CAN_TransmitStatus(CAN1, mailBoxNum); //0 for fail, 1 for good, 2 for pending??
         memset(rxData, 0, sizeof(rxData));
-        errRead= BSP_CAN_Read(&rxId, rxData); //rxId and rxData should be same as what we wrote
+        errRead= BSP_CAN_Read(&rxId, rxData); //rxId and rxData should be same as what we wrote, but this is dropping the most signif. byte of data from batterymV
+        numMessagesWaiting= CAN_MessagePending(CAN1, CAN_FIFO0); //see how many messages pending
 
         volatile int test=0;
         /*Use for loop, 1-5 hz, so 200ms to 1 second delay*/
-        //for (volatile int i=0; i<2000000; i++);
+        for (volatile int i=0; i<2000000; i++);
         
     }
 }

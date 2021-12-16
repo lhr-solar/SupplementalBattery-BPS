@@ -3,7 +3,7 @@
 #include "BSP_CAN.h"
 #include "stm32f4xx.h"
 
-#define CAN_MODE        CAN_Mode_LoopBack   //was Normal
+#define CAN_MODE   CAN_Mode_LoopBack //was Normal, CAN_Mode_LoopBack CAN_Mode_Normal
 
 static CanTxMsg TxMessage;
 static CanRxMsg RxMessage;
@@ -83,12 +83,10 @@ void BSP_CAN_Init(void) { //orignally was void return type
     TxMessage.ExtId = 0x1;
     TxMessage.RTR = CAN_RTR_DATA;
     TxMessage.IDE = CAN_ID_STD;
-    TxMessage.DLC = 1;
+    TxMessage.DLC = 2;         //This needs to be 2, because we need 2 frames because the battery voltage data is 4 bytes, and each frame is 2 bytes
 
     //idk if this will change anything
-    for(int i = 0; i < 8; i++){
-        TxMessage.Data[i] = 0;
-	}
+    //for(int i = 0; i < 8; i++){TxMessage.Data[i] = 0;}
 	//return CAN_Transmit(CAN1, &TxMessage);
 
     /* Receive Structure preparation */
@@ -98,10 +96,7 @@ void BSP_CAN_Init(void) { //orignally was void return type
     RxMessage.DLC = 0;
     RxMessage.FMI = 0;
 
-    //idk if this will change anything
-    for(int i = 0; i < 8; i++){
-        RxMessage.Data[i] = 0;
-	}
+    
 
     /* Enable FIFO 0 message pending Interrupt */
     CAN_ITConfig(CAN1, CAN_IT_FMP0, ENABLE);
@@ -128,7 +123,7 @@ uint8_t BSP_CAN_Write(uint32_t id, int32_t Voltage) {
     
     TxMessage.StdId = id;
        //floatTo4Bytes(Voltage, &TxMessage.Data[4]);
-    memcpy(TxMessage.Data, &Voltage, sizeof(Voltage));
+    memcpy(TxMessage.Data, &Voltage, sizeof(Voltage)); //is this converting voltage to hex and splitting it up into 8 array elements?
 
 
     //uint8_t BSP_CAN_Write(uint32_t id, uint8_t data[8], uint8_t length) {
@@ -151,7 +146,7 @@ uint8_t BSP_CAN_Write(uint32_t id, int32_t Voltage) {
  */
 uint8_t BSP_CAN_Read(uint32_t *id, uint8_t *data) { //originally returns uint8_t
 
-    //CAN1_RX0_IRQHandler();
+    
     //if(RxFlag){
 		for(int i = 0; i < 8; i++){
 			data[i] = RxMessage.Data[i];
