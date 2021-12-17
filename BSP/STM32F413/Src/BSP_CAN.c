@@ -8,9 +8,7 @@
 static CanTxMsg TxMessage;
 static CanRxMsg RxMessage;
 
-static bool RxFlag = false; //was originally false
-
-static void floatTo4Bytes(uint8_t val, uint8_t bytes_array[4]);
+volatile static bool RxFlag = false;
 
 
 /**
@@ -18,7 +16,7 @@ static void floatTo4Bytes(uint8_t val, uint8_t bytes_array[4]);
  * @param   None
  * @return  None
  */
-void BSP_CAN_Init(void) { //orignally was void return type
+void BSP_CAN_Init(void) { 
     GPIO_InitTypeDef GPIO_InitStructure;
     CAN_InitTypeDef CAN_InitStructure;
     NVIC_InitTypeDef NVIC_InitStructure;
@@ -50,7 +48,7 @@ void BSP_CAN_Init(void) { //orignally was void return type
 
     /* CAN cell init */
     CAN_InitStructure.CAN_TTCM = DISABLE;
-    CAN_InitStructure.CAN_ABOM = DISABLE; //was DISABLE
+    CAN_InitStructure.CAN_ABOM = DISABLE; 
     CAN_InitStructure.CAN_AWUM = DISABLE;
     CAN_InitStructure.CAN_NART = DISABLE;
     CAN_InitStructure.CAN_RFLM = DISABLE;
@@ -85,18 +83,13 @@ void BSP_CAN_Init(void) { //orignally was void return type
     TxMessage.IDE = CAN_ID_STD;
     TxMessage.DLC = 2;         //This needs to be 2, because we need 2 frames because the battery voltage data is 4 bytes, and each frame is 2 bytes
 
-    //idk if this will change anything
-    //for(int i = 0; i < 8; i++){TxMessage.Data[i] = 0;}
-	//return CAN_Transmit(CAN1, &TxMessage);
 
     /* Receive Structure preparation */
-    RxMessage.StdId = 0x00; //was 0
+    RxMessage.StdId = 0x00; 
     RxMessage.ExtId = 0x00;
     RxMessage.IDE = CAN_ID_STD;
-    RxMessage.DLC = 0;
+    RxMessage.DLC = 0; //was 0 originally
     RxMessage.FMI = 0;
-
-    
 
     /* Enable FIFO 0 message pending Interrupt */
     CAN_ITConfig(CAN1, CAN_IT_FMP0, ENABLE);
@@ -107,32 +100,19 @@ void BSP_CAN_Init(void) { //orignally was void return type
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);	
-
-
-    //return CANinitSuccess;
     
 }
 
 /**
- * @brief   Transmits the data onto the CAN bus with the specified id
+* @brief   Transmits the data onto the CAN bus with the specified id
 * @param   id : Message of ID. Also indicates the priority of message. The lower the value, the higher the priority.
-* @param   Voltage : the voltage value at that moment in a float
+* @param   Voltage : the voltage value as an integer in millivolts
 * @return  0 if module was unable to transmit the data onto the CAN bus. Any other value indicates data was transmitted.
  */
 uint8_t BSP_CAN_Write(uint32_t id, int32_t Voltage) {
     
     TxMessage.StdId = id;
-       //floatTo4Bytes(Voltage, &TxMessage.Data[4]);
-    memcpy(TxMessage.Data, &Voltage, sizeof(Voltage)); //is this converting voltage to hex and splitting it up into 8 array elements?
-
-
-    //uint8_t BSP_CAN_Write(uint32_t id, uint8_t data[8], uint8_t length) {
-    //TxMessage.DLC = sizeof(Voltage);
-    //uint8_t length =sizeof(Voltage);
-    
-
-	//for(int i = 0; i < length; i++){
-    //    TxMessage.Data[i] = data[i];}
+    memcpy(TxMessage.Data, &Voltage, sizeof(Voltage)); 
 	return CAN_Transmit(CAN1, &TxMessage);
 }
 
@@ -154,39 +134,21 @@ uint8_t BSP_CAN_Read(uint32_t *id, uint8_t *data) { //originally returns uint8_t
         *id = RxMessage.StdId;
 		RxFlag = false;
 		return 1;
-	//}
+    //}
     return 0;
    
    
 }
 
+/**
+ * @brief   Hardware interrupt that handles CAN receive functionality. Is triggered if a message is received.
+ * @param   None
+ * @return  None
+ */
 void CAN1_RX0_IRQHandler(void)
 {
     CAN_Receive(CAN1, CAN_FIFO0, &RxMessage);
 
+    RxFlag = true;
 
-    if ((RxMessage.StdId == 0x001)&&(RxMessage.IDE == CAN_ID_STD) && (RxMessage.DLC == 1)){
-        // TODO: do stuff
-        RxFlag = true;
-    }
-
-}
-
-static void floatTo4Bytes(uint8_t val, uint8_t bytes_array[4]) {
-	uint8_t volt;
-	// Create union of shared memory space
-	union {
-			float float_variable;
-			uint8_t volt_array[4];
-	} u;
-	// Overite bytes of union with float variable
-	u.float_variable = val;
-	// Assign bytes to input array
-	memcpy(bytes_array, u.volt_array, 4);
-    volt = bytes_array[3];
-	bytes_array[3] = bytes_array[0];
-	bytes_array[0] =    volt;
-    volt = bytes_array[2];
-	bytes_array[2] = bytes_array[1];
-	bytes_array[1] =    volt;	
 }
