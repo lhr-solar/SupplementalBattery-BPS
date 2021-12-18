@@ -3,7 +3,7 @@
 #ifndef __CANBUS_H
 #define __CANBUS_H
 
-#include "common.h"
+//#include "common.h"
 
 typedef enum {
     TRIP = 0x02,

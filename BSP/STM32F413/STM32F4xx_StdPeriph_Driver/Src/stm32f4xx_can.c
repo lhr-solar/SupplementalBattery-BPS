@@ -717,7 +717,7 @@ void CAN_TTComModeCmd(CAN_TypeDef* CANx, FunctionalState NewState)
   */
 uint8_t CAN_Transmit(CAN_TypeDef* CANx, CanTxMsg* TxMessage)
 {
-  uint8_t transmit_mailbox = 0;
+  volatile uint8_t transmit_mailbox = 0;
   /* Check the parameters */
   assert_param(IS_CAN_ALL_PERIPH(CANx));
   assert_param(IS_CAN_IDTYPE(TxMessage->IDE));
