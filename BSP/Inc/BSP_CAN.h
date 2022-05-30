@@ -15,10 +15,10 @@ void BSP_CAN_Init(void);
 /**
  * @brief   Transmits the data onto the CAN bus with the specified id
  * @param   id : Message of ID. Also indicates the priority of message. The lower the value, the higher the priority.
- * @param   Voltage : the voltage value at that moment in a float
+ * @param   Voltage : the voltage value at that moment in milivolts
  * @return  0 if module was unable to transmit the data onto the CAN bus. Any other value indicates data was transmitted.
  */
-uint8_t BSP_CAN_Write(uint32_t id, int32_t Voltage);
+uint8_t BSP_CAN_Write(uint32_t id, int16_t Voltage);
 
 /**
  * @brief   Gets the data that was received from the CAN bus.

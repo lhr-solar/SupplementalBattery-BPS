@@ -81,7 +81,7 @@ void BSP_CAN_Init(void) {
     TxMessage.ExtId = 0x1;
     TxMessage.RTR = CAN_RTR_DATA;
     TxMessage.IDE = CAN_ID_STD;
-    TxMessage.DLC = 2;         //This needs to be 2, because we need 2 frames because the battery voltage data is 4 bytes, and each frame is 2 bytes
+    TxMessage.DLC = 2;         // Send 2 bytes because the supplemental voltage is only 2 bytes
 
 
     /* Receive Structure preparation */
@@ -109,7 +109,7 @@ void BSP_CAN_Init(void) {
 * @param   Voltage : the voltage value as an integer in millivolts
 * @return  0 if module was unable to transmit the data onto the CAN bus. Any other value indicates data was transmitted.
  */
-uint8_t BSP_CAN_Write(uint32_t id, int32_t Voltage) {
+uint8_t BSP_CAN_Write(uint32_t id, int16_t Voltage) {
     
     TxMessage.StdId = id;
     memcpy(TxMessage.Data, &Voltage, sizeof(Voltage)); 
